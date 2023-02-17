@@ -1,8 +1,8 @@
-interface storageOption {
+interface StorageOption {
   name: string;
-  value: any;
+  value?: any;
   expored?: number;
-  startTime: number;
+  startTime?: number;
 }
 
 class Storage {
@@ -24,7 +24,8 @@ class Storage {
    * @param startTime 起始时间
    * @param expored 过期时间
    */
-  public setTimeItem(options: storageOption = { name: '', value: '', startTime: new Date().getTime() }): void {
+  public setTimeItem(options: StorageOption): void {
+    Object.assign(options, { startTime: new Date().getTime() });
     if (options.expored) {
       this.storage.setItem(options.name, JSON.stringify(options));
     } else {
@@ -43,11 +44,11 @@ class Storage {
 
   public getTimeItem(name: string) {
     let item = this.storage.getItem(name);
-    if (!item || item == 'null' || item == 'undefined') return;
+    if (!item || item === 'null' || item === 'undefined') return;
     try {
       item = JSON.parse(item);
     } catch (error) {
-      new Error('name is not defind');
+      throw new Error(name + ' is not a');
     }
     if (item.startTime) {
       const now = new Date().getTime();
@@ -78,7 +79,4 @@ class Storage {
 
 const local = new Storage('localStorage');
 const session = new Storage('sessionStorage');
-console.log('====================================');
-console.log(session);
-console.log('====================================');
 export { local, session };
